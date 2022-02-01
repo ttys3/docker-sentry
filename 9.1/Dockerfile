@@ -1,4 +1,4 @@
-FROM python:2.7.16-slim-stretch
+FROM python:2.7.18-slim-stretch
 
 # add our user and group first to make sure their IDs get assigned consistently
 RUN groupadd -r sentry && useradd -r -m -g sentry sentry
@@ -23,7 +23,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
 # grab gosu for easy step-down from root
 RUN set -x \
-    && export GOSU_VERSION=1.11 \
+    && export GOSU_VERSION=1.14 \
     && fetchDeps=" \
         dirmngr \
         gnupg \
