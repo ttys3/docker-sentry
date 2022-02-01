@@ -36,9 +36,9 @@ RUN set -x \
     && for key in \
       B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     ; do \
-      gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+      gpg --batch --keyserver subkeys.pgp.net --recv-keys "$key" || \
+      gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
     && gpgconf --kill all \
@@ -62,9 +62,9 @@ RUN set -x \
     && for key in \
       595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
     ; do \
-      gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+      gpg --batch --keyserver subkeys.pgp.net --recv-keys "$key" || \
+      gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" ; \
     done \
     && gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini \
     && gpgconf --kill all \
@@ -76,7 +76,7 @@ RUN set -x \
 # Support for RabbitMQ and GeoIP
 RUN set -x \
     && apt-get update && apt-get install -y --no-install-recommends make && rm -rf /var/lib/apt/lists/* \
-    && pip install librabbitmq==1.6.1 maxminddb==1.4.1 \
+    && pip install librabbitmq==1.6.1 maxminddb==1.5.4 \
     && python -c 'import librabbitmq' \
     # Fully verify that the C extension is correctly installed, it unfortunately
     # requires a full check into maxminddb.extension.Reader
@@ -94,8 +94,8 @@ RUN set -x \
     " \
     && apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /usr/src/sentry \
-    && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl" \
-    && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc" \
+    && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl "https://github.com/ttys3/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl" \
+    && wget -O /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.sha256sum.txt "https://github.com/ttys3/sentry/releases/download/${SENTRY_VERSION}/sentry-${SENTRY_VERSION}-py27-none-any.whl.sha256sum.txt" \
     && wget -O /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl" \
     && wget -O /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl.asc "https://github.com/getsentry/sentry/releases/download/${SENTRY_VERSION}/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -104,16 +104,17 @@ RUN set -x \
       70DBC4D958026B46032EAB75A17EE621C962DE46 \
       4EBA9A94CC7DC65988662672C2F03C406631065D \
     ; do \
-      gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-      gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+      gpg --batch --keyserver subkeys.pgp.net --recv-keys "$key" || \
+      gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" ; \
     done \
-    && gpg --batch --verify /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.asc /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl \
+    && cd /usr/src/sentry/ && sha256sum -c sentry-${SENTRY_VERSION}-py27-none-any.whl.sha256sum.txt && cd - \
     && gpg --batch --verify /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl.asc /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl \
     && gpgconf --kill all \
     && pip install \
         /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl \
         /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl \
+    && pip install phabricator==0.7.0 \
     && sentry --help \
     && sentry plugins list \
     && rm -r "$GNUPGHOME" /usr/src/sentry \
