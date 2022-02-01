@@ -108,6 +108,7 @@ RUN set -x \
       gpg --batch --keyserver subkeys.pgp.net --recv-keys "$key" || \
       gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" ; \
     done \
+    && cat /usr/src/sentry/sentry-${SENTRY_VERSION}-py27-none-any.whl.sha256sum.txt \
     && cd /usr/src/sentry/ && sha256sum -c sentry-${SENTRY_VERSION}-py27-none-any.whl.sha256sum.txt && cd - \
     && gpg --batch --verify /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl.asc /usr/src/sentry/sentry_plugins-${SENTRY_VERSION}-py2.py3-none-any.whl \
     && gpgconf --kill all \

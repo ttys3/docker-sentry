@@ -321,3 +321,6 @@ if 'BITBUCKET_CONSUMER_KEY' in os.environ:
 
 if 'GEOIP_PATH_MMDB' in os.environ:
     GEOIP_PATH_MMDB = env('GEOIP_PATH_MMDB')
+
+if 'SENTRY_DEFAULT_TIME_ZONE' in os.environ:
+    SENTRY_DEFAULT_TIME_ZONE = env('SENTRY_DEFAULT_TIME_ZONE')
